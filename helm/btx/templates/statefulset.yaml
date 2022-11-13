@@ -7,6 +7,7 @@ spec:
   selector:
     matchLabels:
       application: btx
+  serviceName: btx
   replicas: 1
   template:
     metadata:
