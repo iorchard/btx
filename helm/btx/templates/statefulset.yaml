@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: btx
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      application: btx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        application: btx
+    spec:
+      dnsPolicy: ClusterFirst
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      serviceAccountName: btx
+      initContainers:
+        - name: init
+          image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsUser: 0
+          command:
+            - chown
+            - "1000:1000"
+            - /data
+          volumeMounts:
+            - mountPath: /data
+              name: btx-pvc
+              readOnly: false
+      containers:
+        - name: btx
+          image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: RABBITMQ_ERLANG_COOKIE
+              value: "openstack-cookie"
+            - name: RABBITMQ_USE_LONGNAME
+              value: "true"
+          envFrom:
+            - configMapRef:
+                name: btx
+          volumeMounts:
+            - mountPath: /data
+              name: btx-pvc
+              readOnly: false
+            - mountPath: /etc/localtime
+              name: etclocaltime
+              readOnly: true
+          resources:
+              {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: etclocaltime
+          hostPath:
+            path: /etc/localtime
+            type: File
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: btx-pvc
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.pvc.size }}
+...

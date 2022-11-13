@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: btx
+  namespace: openstack
+data: |
+  OS_AUTH_URL: {{ .Values.openstack.auth_url }}
+  OS_IDENTITY_API_VERSION: "3"
+  OS_IMAGE_API_VERSION: "2"
+  OS_PROJECT_DOMAIN_NAME: default
+  OS_PROJECT_NAME: admin
+  OS_USER_DOMAIN_NAME: default
+  OS_USERNAME: {{ .Values.openstack.username }}
+  OS_PASSWORD: {{ .Values.openstack.password }}
+...

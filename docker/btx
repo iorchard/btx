@@ -1,0 +1,103 @@
+#!/bin/bash
+# burrito client
+
+connect_db () {
+    if [[ -z "${MARIADB_SERVICE_HOST}" ]]; then
+        echo "Error) No MARIADB_SERVICE_HOST exists."
+    else
+        mysql -h mariadb -u root -p 
+    fi
+}
+execute_burrito () {
+    openstack "$@"
+}
+run_burrito () {
+    # check if client can reach each openstack service.
+    declare -A clients
+    clients=(
+        ["cinder"]="300"
+        ["glance"]="300"
+        ["keystone"]="300"
+        ["neutron"]="200"
+        ["nova"]="200"
+    )
+    
+    while true; do
+        for c in ${!clients[@]}; do
+            code=$(curl --silent --output /dev/null --include \
+                    --max-time 3 --write-out "%{http_code}" \
+                    http://$c.openstack.svc.cluster.local:8080/)
+            if [ x"$code" != x"${clients[$c]}" ]; then
+                echo "$c service has a problem."
+            fi
+            sleep 1
+        done
+        sleep 30
+    done
+}
+test_burrito () {
+    # Get cirros image first if not found.
+    #v=$(curl -s http://download.cirros-cloud.net/version/released)
+    #if [ ! -f /usr/local/bin/cirros-${v}-x86_64-disk.img ]; then
+    #    curl -sLo /usr/local/bin/cirros-${v}-x86_64-disk.img \
+    #        http://download.cirros-cloud.net/${v}/cirros-${v}-x86_64-disk.img
+    #fi
+    # Run burrito-test.sh
+    /usr/local/bin/burrito-test.sh
+}
+version_burrito () {
+    openstack module list
+}
+USAGE () {
+    echo "USAGE: $0 {-h|-d|-e|-r|-t|-v}" 1>&2
+    echo ""
+    echo " -h --help            Display this help message."
+    echo " -d --database        Connect to openstack database."
+    echo " -e --execute         Execute burrito command."
+    echo " -r --run             Run burrito client."
+    echo " -t --test            Run burrito-test.sh script."
+    echo " -v --version         Show openstack client versions."
+}
+if [ $# -lt 1 ]; then
+    USAGE
+    exit 0
+fi
+
+OPT=$1
+shift
+# Get argument
+while true
+do
+    case "$OPT" in
+        -d | --database)
+            connect_db
+            break
+            ;;
+        -e | --execute)
+            execute_burrito "$@"
+            break
+            ;;
+        -h | --help)
+            USAGE
+            break
+            ;;
+        -r | --run)
+            run_burrito
+            break
+            ;;
+        -t | --test)
+            test_burrito
+            break
+            ;;
+        -v | --version)
+            version_burrito
+            break
+            ;;
+        *)
+            echo Error: unknown option: "$OPT" 1>&2
+            echo " "
+            USAGE
+            break
+            ;;
+    esac
+done

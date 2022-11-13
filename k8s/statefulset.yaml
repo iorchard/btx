@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: btx
+  namespace: openstack
+spec:
+  selector:
+    matchLabels:
+      application: btx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        application: btx
+    spec:
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        openstack-control-plane: enabled
+      restartPolicy: Always
+      serviceAccountName: btx
+      containers:
+      - name: btx
+        image: jijisa/btx:yoga
+        imagePullPolicy: Always
+        securityContext:
+          readOnlyRootFilesystem: true
+        env:
+        - name: RABBITMQ_ERLANG_COOKIE
+          value: "openstack-cookie"
+        - name: RABBITMQ_USE_LONGNAME
+          value: "true"
+        envFrom:
+        - configMapRef:
+            name: btx
+        volumeMounts:
+        - mountPath: /data
+          name: btx-pvc
+          readOnly: false
+        - mountPath: /etc/localtime
+          name: etclocaltime
+          readOnly: true
+      volumes:
+      - name: etclocaltime
+        hostPath:
+          path: /etc/localtime
+          type: File
+  volumeClaimTemplates:
+  - metadata:
+      name: btx-pvc
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: <put_pvc_size_here ex) 100Gi>
+...
