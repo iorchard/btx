@@ -23,6 +23,8 @@ RUN     apt update && \
                 python3-novaclient \
                 python3-osc-placement \
                 python3-secretstorage && \
+        adduser --home /home/btx --shell /bin/bash --uid 1000 --gid 100 \
+            --disabled-password --gecos "Burrito Toolbos User" btx && \
         chmod +x /tini /usr/local/bin/kubectl && \
         echo $CIRROS_VERSION > /CIRROS_VERSION
 
