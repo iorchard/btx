@@ -79,5 +79,5 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: {{ .Values.pvc.size }}
+            storage: {{ .Values.btx.pvc.size }}
 ...
