@@ -43,11 +43,11 @@ securityContext:
 
 resources:
   limits:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 1000m
+    memory: 768Mi
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 500m
+    memory: 512Mi
 
 nodeSelector:
   openstack-control-plane: enabled
