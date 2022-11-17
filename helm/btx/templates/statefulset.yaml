@@ -26,12 +26,12 @@ spec:
           image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             runAsUser: 0
           command:
-            - chown
-            - "1000:100"
-            - /data
+            - "/bin/bash"
+            - "-c"
+            - "chown 1000:100 /data && rm -fr /tmp && mkdir -p /data/tmp && chmod 1777 /data/tmp && ln -sf /data/tmp /tmp"
           volumeMounts:
             - mountPath: /data
               name: btx-pvc

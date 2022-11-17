@@ -1,5 +1,6 @@
 #!/bin/bash
 # build jijisa/btx
+set -e 
 
 REL=${1:-yoga}
 
@@ -13,3 +14,7 @@ HELM_URL="https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz"
 curl -sL ${HELM_URL} | tar --strip-components 1 -xz linux-amd64/helm
 
 docker build -t jijisa/btx:${REL} .
+
+docker tag jijisa/btx:${REL} jijisa/btx:latest
+docker push jijisa/btx:${REL}
+docker push jijisa/btx:latest

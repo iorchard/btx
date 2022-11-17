@@ -10,7 +10,7 @@ RUN     apt update && apt -y install gnupg curl && \
         curl http://osbpo.debian.net/osbpo/dists/pubkey.gpg | \
             apt-key add - 
 COPY    openstack.list /etc/apt/sources.list.d/
-RUN     apt update && \
+RUN     apt update && chmod 0644 /cirros.img && \
         DEBIAN_FRONTEND=noninteractive \
             apt -y install less watch vim-tiny \
                 mariadb-client rabbitmq-server dnsutils iputils-ping \
