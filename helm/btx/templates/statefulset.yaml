@@ -31,7 +31,7 @@ spec:
           command:
             - "/bin/bash"
             - "-c"
-            - "chown 1000:100 /data && rm -fr /tmp && mkdir -p /data/tmp && chmod 1777 /data/tmp && ln -sf /data/tmp /tmp"
+            - "chown 1000:100 /data"
           volumeMounts:
             - mountPath: /data
               name: btx-pvc
