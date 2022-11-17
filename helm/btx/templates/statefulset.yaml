@@ -54,6 +54,9 @@ spec:
             - mountPath: /data
               name: btx-pvc
               readOnly: false
+            - mountPath: /root
+              name: s3cfg
+              readOnly: true
             - mountPath: /etc/ceph/ceph.client.admin.keyring
               name: ceph-admin-keyring
               readOnly: true
@@ -66,6 +69,13 @@ spec:
           resources:
               {{- toYaml .Values.resources | nindent 12 }}
       volumes:
+        - name: s3cfg
+          secret:
+            secretName: s3cfg
+            defaultMode: 0400
+            items:
+              - key: s3cfg
+                path: .s3cfg
         - name: ceph-admin-keyring
           hostPath:
             path: /etc/ceph/ceph.client.admin.keyring
