@@ -54,12 +54,26 @@ spec:
             - mountPath: /data
               name: btx-pvc
               readOnly: false
+            - mountPath: /etc/ceph/ceph.client.admin.keyring
+              name: ceph-admin-keyring
+              readOnly: true
+            - mountPath: /etc/ceph/ceph.conf
+              name: cephconf
+              readOnly: true
             - mountPath: /etc/localtime
               name: etclocaltime
               readOnly: true
           resources:
               {{- toYaml .Values.resources | nindent 12 }}
       volumes:
+        - name: ceph-admin-keyring
+          hostPath:
+            path: /etc/ceph/ceph.client.admin.keyring
+            type: File
+        - name: cephconf
+          hostPath:
+            path: /etc/ceph/ceph.conf
+            type: File
         - name: etclocaltime
           hostPath:
             path: /etc/localtime

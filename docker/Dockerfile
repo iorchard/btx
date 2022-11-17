@@ -8,13 +8,15 @@ ADD     https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}
 COPY    btx burrito-test.sh helm /usr/local/bin/
 RUN     apt update && apt -y install gnupg curl && \
         curl http://osbpo.debian.net/osbpo/dists/pubkey.gpg | \
-            apt-key add - 
-COPY    openstack.list /etc/apt/sources.list.d/
+            apt-key add - && \
+        curl https://download.ceph.com/keys/release.gpg | \
+            apt-key add -
+COPY    openstack.list ceph.list /etc/apt/sources.list.d/
 RUN     apt update && chmod 0644 /cirros.img && \
         DEBIAN_FRONTEND=noninteractive \
-            apt -y install less watch vim-tiny \
-                mariadb-client rabbitmq-server dnsutils iputils-ping \
-                rustc libssl-dev \
+            apt -y install git less watch vim-tiny openssh-client \
+                mariadb-client dnsutils iputils-ping \
+                ceph-common s3cmd \
                 python3-openstackclient \
                 python3-cinderclient \
                 python3-glanceclient \

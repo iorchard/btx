@@ -11,7 +11,24 @@ connect_db () {
 execute_burrito () {
     openstack "$@"
 }
+post_install_burrito () {
+    echo -n "Creating host aggregate..."
+    if ! openstack aggregate show public-zone >& /dev/null
+    then
+        openstack aggregate create public-zone
+    fi
+    openstack aggregate set --zone public-zone public-zone
+    echo "Done"
+    echo -n "Set volume type to private..."
+    for vol_type in $(openstack volume type list -c ID -f value);do
+        cinder type-update --is-public False ${vol_type} >& /dev/null
+    done
+    echo "Done"
+}
 run_burrito () {
+    # run post_install_burrito
+    post_install_burrito
+
     # check if client can reach each openstack service.
     declare -A clients
     clients=(
@@ -79,6 +96,10 @@ do
             ;;
         -h | --help)
             USAGE
+            break
+            ;;
+        -p | --post-install)
+            post_install_burrito
             break
             ;;
         -r | --run)
