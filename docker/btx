@@ -12,11 +12,6 @@ execute_burrito () {
     openstack "$@"
 }
 run_burrito () {
-    # delete /tmp, create /data/tmp, and symlink /data/tmp to /tmp
-    rm -fr /tmp
-    mkdir -p /data/tmp
-    chmod 1777 /data/tmp
-    ln -sf /data/tmp /tmp
     # check if client can reach each openstack service.
     declare -A clients
     clients=(
