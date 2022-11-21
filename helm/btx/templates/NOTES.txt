@@ -6,9 +6,6 @@ alias btx="sudo kubectl -n openstack exec -it $(kubectl -n openstack get po \
 alias bts="sudo kubectl -n openstack exec -it $(kubectl -n openstack get po \
    -l application=btx \
    -o jsonpath='{.items[0].metadata.name}') -- bash"
-alias openstack="sudo kubectl -n openstack exec -it $(kubectl -n openstack \
-    get po -l application=btx \
-   -o jsonpath='{.items[0].metadata.name}') -- btx -e"
 
 Source it.
 
@@ -21,7 +18,7 @@ If you want to go into btx shell, run btx.
 
 You can run kubectl, openstack, helm command there.
 
-   root@a5cc02a304c6:/# openstack server list -c Name -c Status
+   root@a5cc02a304c6:/# openstack server list
    root@a5cc02a304c6:/# kubectl get nodes
    root@a5cc02a304c6:/# helm list -n openstack
 

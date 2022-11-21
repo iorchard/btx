@@ -51,6 +51,9 @@ spec:
             - configMapRef:
                 name: btx
           volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+              readOnly: false
             - mountPath: /data
               name: btx-pvc
               readOnly: false
@@ -69,6 +72,10 @@ spec:
           resources:
               {{- toYaml .Values.resources | nindent 12 }}
       volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+            sizeLimit: 100Mi
         - name: s3cfg
           secret:
             secretName: s3cfg
