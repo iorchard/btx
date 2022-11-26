@@ -51,6 +51,18 @@ spec:
             - configMapRef:
                 name: btx
           volumeMounts:
+            - mountPath: /etc/mysql/certs/tls.crt
+              name: mariadb-tls-direct
+              readOnly: true
+              subPath: tls.crt
+            - mountPath: /etc/mysql/certs/tls.key
+              name: mariadb-tls-direct
+              readOnly: true
+              subPath: tls.key
+            - mountPath: /etc/mysql/certs/ca.crt
+              name: mariadb-tls-direct
+              readOnly: true
+              subPath: ca.crt
             - mountPath: /tmp
               name: tmp-volume
               readOnly: false
@@ -72,6 +84,10 @@ spec:
           resources:
               {{- toYaml .Values.resources | nindent 12 }}
       volumes:
+        - name: mariadb-tls-direct
+          secret:
+            defaultMode: 292
+            secretName: mariadb-tls-direct
         - name: tmp-volume
           emptyDir:
             medium: Memory

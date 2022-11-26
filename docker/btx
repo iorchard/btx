@@ -5,7 +5,11 @@ connect_db () {
     if [[ -z "${MARIADB_SERVICE_HOST}" ]]; then
         echo "Error) No MARIADB_SERVICE_HOST exists."
     else
-        mysql -h mariadb -u root -p 
+        mariadb -h mariadb -u root -p --ssl \
+            --ssl-ca=/etc/mysql/certs/ca.crt \
+            --ssl-cert=/etc/mysql/certs/tls.crt \
+            --ssl-key=/etc/mysql/certs/tls.key \
+            --ssl-verify-server-cert=true
     fi
 }
 execute_burrito () {
