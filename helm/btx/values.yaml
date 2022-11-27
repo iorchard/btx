@@ -10,9 +10,10 @@ btx:
     size: "10Gi"
 
 openstack:
-  auth_url: http://keystone.openstack.svc.cluster.local:8080/v3
+  auth_url: https://keystone.openstack.svc.cluster.local:8443/v3
   username: admin
   password: <password>
+  cacert: "/etc/mysql/certs/ca.crt"
 
 image:
   repo: jijisa/btx

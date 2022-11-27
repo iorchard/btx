@@ -13,4 +13,5 @@ data:
   OS_USER_DOMAIN_NAME: "default"
   OS_USERNAME: "{{ .Values.openstack.username }}"
   OS_PASSWORD: "{{ .Values.openstack.password }}"
+  OS_CACERT: "{{ .Values.openstack.cacert }}"
 ...
