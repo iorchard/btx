@@ -13,7 +13,7 @@ openstack:
   auth_url: https://keystone.openstack.svc.cluster.local:8443/v3
   username: admin
   password: <password>
-  cacert: "/etc/mysql/certs/ca.crt"
+  cacert: "/etc/ssl/certs/ca.crt"
 
 image:
   repo: jijisa/btx
