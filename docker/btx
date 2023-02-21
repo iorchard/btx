@@ -17,7 +17,7 @@ execute_burrito () {
 }
 post_install_burrito () {
     echo -n "Creating host aggregate..."
-    if ! openstack aggregate show public-zone >& /dev/null
+    if ! openstack aggregate show public-zone &> /dev/null
     then
         openstack aggregate create public-zone
     fi
@@ -25,7 +25,7 @@ post_install_burrito () {
     echo "Done"
     echo -n "Set volume type to private..."
     for vol_type in $(openstack volume type list -c ID -f value);do
-        cinder type-update --is-public False ${vol_type} >& /dev/null
+        cinder type-update --is-public False ${vol_type} &> /dev/null
     done
     echo "Done"
 }
