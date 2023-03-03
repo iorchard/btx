@@ -1,4 +1,8 @@
 source /usr/share/bash-completion/bash_completion
-alias k=kubectl
+alias w='watch '
+alias o='openstack'
+complete -o default -F _openstack o
+__load_completion openstack
+alias k='kubectl'
 complete -o default -F __start_kubectl k
 export PATH="${KREW_ROOT}/bin:$PATH"
