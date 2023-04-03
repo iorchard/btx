@@ -142,7 +142,7 @@ function flavor() {
   fi
   echo "Done"
   if openstack server show test >/dev/null 2>&1; then
-    echo -n "Removing existing test VM..."
+    echo -n "Removing an existing instance..."
     openstack server delete test
     echo "Done"
   fi

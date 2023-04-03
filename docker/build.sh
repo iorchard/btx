@@ -3,6 +3,15 @@ set -e
 
 . .env
 
+# get the most recent git tag
+set +e
+BTX_VERSION=$(git describe --tags --abbrev=0 2>/dev/null)
+if [ -z "${BTX_VERSION}" ]; then
+  echo "No git tag is found. I'll use the last commit id instead."
+  BTX_VERSION=$(git rev-parse --short HEAD)
+fi
+set -e
+
 cat <<EOF > openstack.list
 deb http://osbpo.debian.net/osbpo bullseye-${OPENSTACK_RELEASE}-backports main
 deb http://osbpo.debian.net/osbpo bullseye-${OPENSTACK_RELEASE}-backports-nochange main
@@ -19,7 +28,8 @@ KREW_URL="https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSI
 curl -sL ${KREW_URL} | tar -xz ./krew-linux_amd64
 
 docker build \
-  -t jijisa/btx:${OPENSTACK_RELEASE}-${K8S_VERSION}-${CEPH_RELEASE} \
+  -t jijisa/btx:${BTX_VERSION} \
+  --build-arg BTX_VERSION=${BTX_VERSION} \
   --build-arg TINI_VERSION=${TINI_VERSION} \
   --build-arg CIRROS_VERSION=${CIRROS_VERSION} \
   --build-arg K8S_VERSION=${K8S_VERSION} \
@@ -29,7 +39,6 @@ docker build \
   --build-arg KREW_VERSION=${KREW_VERSION} \
   .
 
-docker tag jijisa/btx:${OPENSTACK_RELEASE}-${K8S_VERSION}-${CEPH_RELEASE} \
-  jijisa/btx:latest
-docker push jijisa/btx:${OPENSTACK_RELEASE}-${K8S_VERSION}-${CEPH_RELEASE}
+docker tag jijisa/btx:${BTX_VERSION} jijisa/btx:latest
+docker push jijisa/btx:${BTX_VERSION}
 docker push jijisa/btx:latest
