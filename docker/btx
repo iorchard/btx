@@ -57,14 +57,8 @@ run_burrito () {
     done
 }
 test_burrito () {
-    # Get cirros image first if not found.
-    #v=$(curl -s http://download.cirros-cloud.net/version/released)
-    #if [ ! -f /usr/local/bin/cirros-${v}-x86_64-disk.img ]; then
-    #    curl -sLo /usr/local/bin/cirros-${v}-x86_64-disk.img \
-    #        http://download.cirros-cloud.net/${v}/cirros-${v}-x86_64-disk.img
-    #fi
-    # Run burrito-test.sh
-    /usr/local/bin/burrito-test.sh
+    PARAM=${1:-"--provider"}
+    /usr/local/bin/burrito-test.sh ${PARAM}
 }
 version_burrito () {
     openstack module list

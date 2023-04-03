@@ -23,6 +23,9 @@ docker build \
   --build-arg TINI_VERSION=${TINI_VERSION} \
   --build-arg CIRROS_VERSION=${CIRROS_VERSION} \
   --build-arg K8S_VERSION=${K8S_VERSION} \
+  --build-arg OPENSTACK_RELEASE=${OPENSTACK_RELEASE} \
+  --build-arg CEPH_RELEASE=${CEPH_RELEASE} \
+  --build-arg HELM_VERSION=${HELM_VERSION} \
   --build-arg KREW_VERSION=${KREW_VERSION} \
   .
 

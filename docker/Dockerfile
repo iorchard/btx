@@ -2,9 +2,17 @@ FROM    debian:bullseye-slim
 ARG     TINI_VERSION
 ARG     CIRROS_VERSION
 ARG     K8S_VERSION
+ARG     OPENSTACK_RELEASE
+ARG     CEPH_RELEASE
+ARG     HELM_VERSION
+ARG     KREW_VERSION
 ENV     TINI_VERSION ${TINI_VERSION}
 ENV     CIRROS_VERSION ${CIRROS_VERSION}
 ENV     K8S_VERSION ${K8S_VERSION}
+ENV     OPENSTACK_RELEASE ${OPENSTACK_RELEASE}
+ENV     CEPH_RELEASE ${CEPH_RELEASE}
+ENV     HELM_VERSION ${HELM_VERSION}
+ENV     KREW_VERSION ${KREW_VERSION}
 ENV     KREW_ROOT /usr/local/krew
 ADD     https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 ADD     http://download.cirros-cloud.net/${CIRROS_VERSION}/cirros-${CIRROS_VERSION}-x86_64-disk.img /cirros.img
