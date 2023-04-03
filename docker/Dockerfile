@@ -26,6 +26,7 @@ RUN     apt update && apt -y install gnupg curl && \
         curl https://download.ceph.com/keys/release.gpg | \
             apt-key add -
 COPY    openstack.list ceph.list /etc/apt/sources.list.d/
+SHELL   ["/bin/bash", "-c"]
 RUN     apt update && chmod 0644 /cirros.img && \
         DEBIAN_FRONTEND=noninteractive \
             apt -y install git less watch vim-tiny openssh-client \
