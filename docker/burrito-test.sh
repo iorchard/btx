@@ -17,7 +17,7 @@ function provider_settings() {
   while true; do
     read -p 'The first IP address to allocate (e.g. 192.168.22.100): ' FIP
     FIP2=$(echo $FIP|cut -d'.' -f1,2,3)
-    if [ "$PN" =~ "$FIP2" ];then
+    if [[ "$PN" =~ "$FIP2" ]];then
       echo "Okay. I got the first address in the pool: $FIP"
       break;
     fi
@@ -26,13 +26,13 @@ function provider_settings() {
   while true; do
     read -p 'The last IP address to allocate (e.g. 192.168.22.200): ' LIP
     LIP2=$(echo $LIP|cut -d'.' -f1,2,3)
-    if [ "$PN" =~ "$LIP2" ];then
+    if [[ "$PN" =~ "$LIP2" ]];then
       OLDIFS=$IFS
       IFS='.'
       l=($LIP)
       f=($FIP)
       IFS=$OLDIFS
-      if [ ${l[3]} -gt ${f[3]} ]; then
+      if [[ ${l[3]} -gt ${f[3]} ]]; then
           echo "Okay. I got the last address in the pool: $LIP"
           break;
       fi
@@ -135,7 +135,7 @@ function secgroup() {
 }
 
 function flavor() {
-  echo -n "Create a flavor..."
+  echo -n "Creating a flavor..."
   if ! openstack flavor show m1.tiny >/dev/null 2>&1; then
     echo
     openstack flavor create --vcpus 1 --ram 1024 --disk 10 m1.tiny
