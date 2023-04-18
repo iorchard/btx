@@ -27,6 +27,9 @@ curl -sL ${HELM_URL} | tar --strip-components 1 -xz linux-amd64/helm
 KREW_URL="https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz"
 curl -sL ${KREW_URL} | tar -xz ./krew-linux_amd64
 
+TRIDENT_URL="https://github.com/NetApp/trident/releases/download/v${TRIDENT_VERSION}/trident-installer-${TRIDENT_VERSION}.tar.gz"
+curl -sL ${TRIDENT_URL} | tar --strip-components 1 -xz trident-installer/tridentctl
+
 docker build \
   -t jijisa/btx:${BTX_VERSION} \
   --build-arg BTX_VERSION=${BTX_VERSION} \
@@ -37,6 +40,7 @@ docker build \
   --build-arg CEPH_RELEASE=${CEPH_RELEASE} \
   --build-arg HELM_VERSION=${HELM_VERSION} \
   --build-arg KREW_VERSION=${KREW_VERSION} \
+  --build-arg TRIDENT_VERSION=${TRIDENT_VERSION} \
   .
 
 docker tag jijisa/btx:${BTX_VERSION} jijisa/btx:latest
