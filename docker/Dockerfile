@@ -29,7 +29,7 @@ COPY    openstack.list ceph.list /etc/apt/sources.list.d/
 SHELL   ["/bin/bash", "-c"]
 RUN     apt update && chmod 0644 /cirros.img && \
         DEBIAN_FRONTEND=noninteractive \
-            apt -y install git less watch vim-tiny openssh-client \
+            apt -y install git less watch vim openssh-client \
                 mariadb-client dnsutils iputils-ping bash-completion \
                 ceph-common s3cmd \
                 python3-openstackclient \
@@ -40,16 +40,13 @@ RUN     apt update && chmod 0644 /cirros.img && \
                 python3-novaclient \
                 python3-osc-placement \
                 python3-secretstorage && \
-        adduser --home /home/btx --shell /bin/bash --uid 1000 --gid 100 \
-            --disabled-password --gecos "Burrito Toolbox User" btx && \
         chmod +x /tini /usr/local/bin/kubectl && \
         kubectl completion bash | \
             tee /etc/bash_completion.d/kubectl >/dev/null && \
         /usr/local/bin/krew-linux_amd64 install krew && \
         cat /usr/local/bin/bashrc.txt >> ~/.bashrc && \
         . ~/.bashrc && \
-        kubectl krew install ctx ns neat tail && \
-        echo $CIRROS_VERSION > /CIRROS_VERSION
+        kubectl krew install ctx ns neat tail
 
 ENTRYPOINT  ["/tini", "--", "/usr/local/bin/btx"]
 CMD         ["--run"]

@@ -4,6 +4,7 @@
 
 replicaCount: 1
 
+enable_ceph: true
 namespace: openstack
 btx:
   pvc:

@@ -1,5 +1,9 @@
+# login home is readonly /root but the new readwrite home is /data after login.
+HOME=/data
+# bash completion and aliases
 . /usr/share/bash-completion/bash_completion
 alias w='watch '
+alias s3cmd='s3cmd -c /root/.s3cfg '
 alias o='openstack'
 complete -o default -F _openstack o
 __load_completion openstack

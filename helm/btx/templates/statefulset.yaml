@@ -73,6 +73,7 @@ spec:
             - mountPath: /data
               name: btx-pvc
               readOnly: false
+            {{- if .Values.enable_ceph }}
             - mountPath: /root/.s3cfg
               subPath: s3cfg
               name: s3cfg
@@ -83,6 +84,7 @@ spec:
             - mountPath: /etc/ceph/ceph.conf
               name: cephconf
               readOnly: true
+            {{- end }}
             - mountPath: /etc/localtime
               name: etclocaltime
               readOnly: true
@@ -101,6 +103,7 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 100Mi
+        {{- if .Values.enable_ceph }}
         - name: s3cfg
           secret:
             secretName: s3cfg
@@ -113,6 +116,7 @@ spec:
           hostPath:
             path: /etc/ceph/ceph.conf
             type: File
+        {{- end }}
         - name: etclocaltime
           hostPath:
             path: /etc/localtime

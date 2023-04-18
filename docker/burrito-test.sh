@@ -105,7 +105,7 @@ function image() {
         --disk-format qcow2 \
         --container-format bare \
         --file $IMG \
-        --tag $(cat /CIRROS_VERSION) \
+        --tag $CIRROS_VERSION \
         --public \
         cirros
     openstack image show cirros

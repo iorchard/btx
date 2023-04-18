@@ -23,11 +23,6 @@ post_install_burrito () {
     fi
     openstack aggregate set --zone public-zone public-zone
     echo "Done"
-    echo -n "Set volume type to private..."
-    for vol_type in $(openstack volume type list -c ID -f value);do
-        cinder type-update --is-public False ${vol_type} &> /dev/null
-    done
-    echo "Done"
 }
 run_burrito () {
     # run post_install_burrito
