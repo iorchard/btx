@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e 
 
+CURRENT_DIR=$( dirname "$(readlink -f "$0")" )
+
 . .env
+
+dockerfile_envs=$(while read line;do k=${line%%=*};v=${line##*=};echo -e "ENV $k $v";done<.env)
+perl -pe "s/%%ARG%%/${dockerfile_args}/;s/%%ENV%%/${dockerfile_envs}/" Dockerfile > Dockerfile.btx
 
 # get the most recent git tag
 set +e
@@ -21,26 +26,21 @@ cat <<EOF > ceph.list
 deb https://download.ceph.com/debian-${CEPH_RELEASE} bullseye main
 EOF
 
-HELM_URL="https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz"
-curl -sL ${HELM_URL} | tar --strip-components 1 -xz linux-amd64/helm
-
-KREW_URL="https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz"
-curl -sL ${KREW_URL} | tar -xz ./krew-linux_amd64
-
-TRIDENT_URL="https://github.com/NetApp/trident/releases/download/v${TRIDENT_VERSION}/trident-installer-${TRIDENT_VERSION}.tar.gz"
-curl -sL ${TRIDENT_URL} | tar --strip-components 1 -xz trident-installer/tridentctl
+pushd ${CURRENT_DIR}/bin
+  HELM_URL="https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz"
+  curl -sL ${HELM_URL} | tar --strip-components 1 -xz linux-amd64/helm
+  
+  KREW_URL="https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz"
+  curl -sL ${KREW_URL} | tar -xz ./krew-linux_amd64
+  
+  TRIDENT_URL="https://github.com/NetApp/trident/releases/download/v${TRIDENT_VERSION}/trident-installer-${TRIDENT_VERSION}.tar.gz"
+  curl -sL ${TRIDENT_URL} | tar --strip-components 1 -xz trident-installer/tridentctl
+popd
 
 docker build \
   -t jijisa/btx:${BTX_VERSION} \
   --build-arg BTX_VERSION=${BTX_VERSION} \
-  --build-arg TINI_VERSION=${TINI_VERSION} \
-  --build-arg CIRROS_VERSION=${CIRROS_VERSION} \
-  --build-arg K8S_VERSION=${K8S_VERSION} \
-  --build-arg OPENSTACK_RELEASE=${OPENSTACK_RELEASE} \
-  --build-arg CEPH_RELEASE=${CEPH_RELEASE} \
-  --build-arg HELM_VERSION=${HELM_VERSION} \
-  --build-arg KREW_VERSION=${KREW_VERSION} \
-  --build-arg TRIDENT_VERSION=${TRIDENT_VERSION} \
+  --file Dockerfile.btx \
   .
 
 docker tag jijisa/btx:${BTX_VERSION} jijisa/btx:latest
