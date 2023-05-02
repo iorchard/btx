@@ -213,8 +213,8 @@ function end() {
 
 function instance_with_selfservice() {
   selfservice
-  router
   provider
+  router
   image
   secgroup
   flavor
