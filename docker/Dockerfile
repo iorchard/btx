@@ -19,7 +19,7 @@ RUN     apt update && chmod 0644 /cirros.img && \
         DEBIAN_FRONTEND=noninteractive \
             apt -y install git less watch vim openssh-client \
                 mariadb-client dnsutils iputils-ping bash-completion \
-                ceph-common s3cmd \
+                ceph-common s3cmd qemu-utils \
                 python3-openstackclient \
                 python3-cinderclient \
                 python3-glanceclient \
