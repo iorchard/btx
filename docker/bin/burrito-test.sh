@@ -16,7 +16,7 @@ function provider_settings() {
   done
   while true; do
     read -p 'The first IP address to allocate (e.g. 192.168.22.100): ' FIP
-    if (echo $FIP|grepcidr $PN) &>/devnull; then
+    if (echo $FIP|grepcidr $PN) &>/dev/null; then
       echo "Okay. I got the first address in the pool: $FIP"
       break;
     fi
@@ -24,7 +24,7 @@ function provider_settings() {
   done
   while true; do
     read -p 'The last IP address to allocate (e.g. 192.168.22.200): ' LIP
-    if (echo $LIP|grepcidr $PN) &>/devnull; then
+    if (echo $LIP|grepcidr $PN) &>/dev/null; then
       OLDIFS=$IFS
       IFS='.'
       l=($LIP)
