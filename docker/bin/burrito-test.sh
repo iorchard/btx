@@ -8,7 +8,7 @@ PROVIDER_NAME="public"
 function provider_settings() {
   while true; do
     read -p 'Type the provider network address (e.g. 192.168.22.0/24): ' PN
-    if grep -P -q  "^\d+\.\d+\.\d+.\d+\/\d" <<<"$PN"; then
+    if grep -P -q  "^\d+\.\d+\.\d+.\d+\/\d+" <<<"$PN"; then
       echo "Okay. I got the provider network address: $PN"
       break
     fi
@@ -16,28 +16,31 @@ function provider_settings() {
   done
   while true; do
     read -p 'The first IP address to allocate (e.g. 192.168.22.100): ' FIP
-    FIP2=$(echo $FIP|cut -d'.' -f1,2,3)
-    if [[ "$PN" =~ "$FIP2" ]];then
+    if (echo $FIP|grepcidr $PN) &>/devnull; then
       echo "Okay. I got the first address in the pool: $FIP"
       break;
     fi
-    echo "You typed the wrong IP address. Type again."
+    echo "The first IP should be in the network range. Type again."
   done
   while true; do
     read -p 'The last IP address to allocate (e.g. 192.168.22.200): ' LIP
-    LIP2=$(echo $LIP|cut -d'.' -f1,2,3)
-    if [[ "$PN" =~ "$LIP2" ]];then
+    if (echo $LIP|grepcidr $PN) &>/devnull; then
       OLDIFS=$IFS
       IFS='.'
       l=($LIP)
       f=($FIP)
       IFS=$OLDIFS
-      if [[ ${l[3]} -gt ${f[3]} ]]; then
+      FDEC=$((${f[3]}+(${f[2]}*256)+(${f[1]}*256*256)+(${f[0]}*256*256*256)))
+      LDEC=$((${l[3]}+(${l[2]}*256)+(${l[1]}*256*256)+(${l[0]}*256*256*256)))
+      if [[ ${LDEC} -gt ${FDEC} ]]; then
           echo "Okay. I got the last address in the pool: $LIP"
           break;
+      else
+        echo "The last IP should be greater than the first IP."
       fi
+    else
+      echo "The last IP should be in the network range. Type again."
     fi
-    echo "You typed the wrong IP address. Type again."
   done
 }
 
