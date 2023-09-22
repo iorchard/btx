@@ -88,6 +88,9 @@ spec:
             - mountPath: /etc/localtime
               name: etclocaltime
               readOnly: true
+            - mountPath: /etc/hosts
+              name: etchosts
+              readOnly: true
           resources:
               {{- toYaml .Values.resources | nindent 12 }}
       volumes:
@@ -120,6 +123,10 @@ spec:
         - name: etclocaltime
           hostPath:
             path: /etc/localtime
+            type: File
+        - name: etchosts
+          hostPath:
+            path: /etc/hosts
             type: File
       {{- with .Values.affinity }}
       affinity:
