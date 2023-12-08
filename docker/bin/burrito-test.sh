@@ -194,10 +194,10 @@ function volume() {
   until [ x"${VOLUME_STATUS}" = x"available" ]
   do
     echo "Waiting for the volume availability..."
-    sleep 1
+    sleep 3
     VOLUME_STATUS=$(openstack volume show test_vol -f value -c status)
     if [ "$i" = "10" ]; then
-      echo "Abort: Volume is not available at least 10 seconds so I give up."
+      echo "Abort: Volume is not available so I give up."
       exit 1
     fi
     ((i++))
