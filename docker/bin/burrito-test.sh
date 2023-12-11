@@ -180,6 +180,8 @@ function fip() {
 }
 
 function volume() {
+  SLEEP=6
+  LOOP=20
   if openstack volume show test_vol >/dev/null 2>&1; then
     echo -n "Removing an existing volume..."
     openstack volume delete test_vol
@@ -194,9 +196,9 @@ function volume() {
   until [ x"${VOLUME_STATUS}" = x"available" ]
   do
     echo "Waiting for the volume availability..."
-    sleep 3
+    sleep $SLEEP
     VOLUME_STATUS=$(openstack volume show test_vol -f value -c status)
-    if [ "$i" = "10" ]; then
+    if [ "$i" = "$LOOP" ]; then
       echo "Abort: Volume is not available so I give up."
       exit 1
     fi
