@@ -16,12 +16,8 @@ execute_burrito () {
     openstack "$@"
 }
 post_install_burrito () {
-    echo -n "Creating host aggregate..."
-    if ! openstack aggregate show public-zone &> /dev/null
-    then
-        openstack aggregate create public-zone
-    fi
-    openstack aggregate set --zone public-zone public-zone
+    echo -n "Post install..."
+    # put the post install command here
     echo "Done"
 }
 run_burrito () {
@@ -64,6 +60,7 @@ USAGE () {
     echo " -h --help            Display this help message."
     echo " -d --database        Connect to openstack database."
     echo " -e --execute         Execute burrito command."
+    echo " -p --post-install    Execute post install commands."
     echo " -r --run             Run burrito client."
     echo " -t --test            Run burrito-test.sh script."
     echo " -v --version         Show openstack client versions."
