@@ -1,4 +1,4 @@
-FROM    debian:bullseye-slim
+FROM    debian:bookworm-slim
 ARG     BTX_VERSION
 %%ARG%%
 ENV     BTX_VERSION ${BTX_VERSION}
