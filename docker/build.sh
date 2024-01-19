@@ -18,12 +18,12 @@ fi
 set -e
 
 cat <<EOF > openstack.list
-deb http://osbpo.debian.net/osbpo bullseye-${OPENSTACK_RELEASE}-backports main
-deb http://osbpo.debian.net/osbpo bullseye-${OPENSTACK_RELEASE}-backports-nochange main
+deb http://osbpo.debian.net/osbpo bookworm-${OPENSTACK_RELEASE}-backports main
+deb http://osbpo.debian.net/osbpo bookworm-${OPENSTACK_RELEASE}-backports-nochange main
 EOF
 
 cat <<EOF > ceph.list
-deb https://download.ceph.com/debian-${CEPH_RELEASE} bullseye main
+deb https://download.ceph.com/debian-${CEPH_RELEASE} bookworm main
 EOF
 
 pushd ${CURRENT_DIR}/bin
