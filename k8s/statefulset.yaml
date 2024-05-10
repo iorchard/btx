@@ -4,6 +4,9 @@ metadata:
   name: btx
   namespace: openstack
 spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
   selector:
     matchLabels:
       application: btx
