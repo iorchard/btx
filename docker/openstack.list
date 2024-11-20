@@ -1,0 +1,2 @@
+deb http://osbpo.debian.net/osbpo bookworm-antelope-backports main
+deb http://osbpo.debian.net/osbpo bookworm-antelope-backports-nochange main
