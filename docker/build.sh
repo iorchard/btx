@@ -43,6 +43,3 @@ docker build \
   --file Dockerfile.btx \
   .
 
-docker tag jijisa/btx:${BTX_VERSION} jijisa/btx:latest
-docker push jijisa/btx:${BTX_VERSION}
-docker push jijisa/btx:latest
