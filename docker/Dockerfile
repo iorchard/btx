@@ -6,7 +6,7 @@ ENV     BTX_VERSION ${BTX_VERSION}
 ENV     KREW_ROOT /usr/local/krew
 ADD     https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 ADD     http://download.cirros-cloud.net/${CIRROS_VERSION}/cirros-${CIRROS_VERSION}-x86_64-disk.img /cirros.img
-ADD     https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl /usr/local/bin/kubectl
+ADD     https://dl.k8s.io/release/${K8S_VERSION}/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 COPY    bin/ /usr/local/bin/
 RUN     apt update && apt -y install gnupg curl && \
         curl http://osbpo.debian.net/osbpo/dists/pubkey.gpg | \
