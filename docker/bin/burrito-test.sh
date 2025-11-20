@@ -3,7 +3,7 @@
 set -e -o pipefail
 
 SELFSERVICE_NAME="private"
-PROVIDER_NAME="public"
+PROVIDER_NAME=
 
 NET_TYPES=('flat' 'vlan')
 NET_TYPE=
@@ -74,14 +74,14 @@ function provider_settings() {
 
 function selfservice() {
   echo -n "Creating a selfservice network..."
-  if ! openstack network show ${SELFSERVICE_NAME}-net >/dev/null 2>&1; then
+  if ! openstack network show ${SELFSERVICE_NAME} >/dev/null 2>&1; then
     echo
-    openstack network create ${SELFSERVICE_NAME}-net
+    openstack network create ${SELFSERVICE_NAME}
   fi
   if ! openstack subnet show ${SELFSERVICE_NAME}-subnet >/dev/null 2>&1; then
     echo
     openstack subnet create \
-        --network ${SELFSERVICE_NAME}-net \
+        --network ${SELFSERVICE_NAME} \
         --subnet-range 172.30.1.0/24 \
         --dns-nameserver 8.8.8.8 \
         ${SELFSERVICE_NAME}-subnet
@@ -95,7 +95,7 @@ function router() {
     echo
     openstack router create admin-router
     openstack router add subnet admin-router ${SELFSERVICE_NAME}-subnet
-    openstack router set --external-gateway ${PROVIDER_NAME}-net admin-router
+    openstack router set --external-gateway ${PROVIDER_NAME} admin-router
     openstack router show admin-router
   fi
   echo "Done"
@@ -103,23 +103,25 @@ function router() {
 
 function provider() {
   echo -n "Creating a provider network..."
-  if ! openstack network show ${PROVIDER_NAME}-net >/dev/null 2>&1; then
+  if ! openstack network show ${PROVIDER_NAME} >/dev/null 2>&1; then
     echo
     provider_settings
+    PROVIDER_NAME="${NET_TYPE}"
     SEGMENT_PARAMS=
     if [ ! -z "${VLANID}" ]; then
       SEGMENT_PARAMS="--provider-segment ${VLANID}"
+      PROVIDER_NAME="${PROVIDER_NAME}-${VLANID}"
     fi
     openstack network create \
         --external \
         --share \
         --provider-network-type ${NET_TYPE} \
         --provider-physical-network external ${SEGMENT_PARAMS} \
-        ${PROVIDER_NAME}-net
+        ${PROVIDER_NAME}
   fi
   if ! openstack subnet show ${PROVIDER_NAME}-subnet >/dev/null 2>&1; then
     echo
-    openstack subnet create --network ${PROVIDER_NAME}-net \
+    openstack subnet create --network ${PROVIDER_NAME} \
         --subnet-range ${PN} \
         --allocation-pool start=${FIP},end=${LIP} \
         --dns-nameserver 8.8.8.8 ${PROVIDER_NAME}-subnet
@@ -186,14 +188,14 @@ function flavor() {
 function instance() {
   # get the first argument
   NET=$1
-  if [ -z "${NET}" ]; then
+  if [ -z "$NET" ]; then
     echo "Abort: Network is not specified for the instance."
     echo 
     exit 1
   fi
   IMAGE=$(openstack image show cirros -f value -c id)
   FLAVOR=$(openstack flavor show m1.tiny -f value -c id)
-  NETWORK=$(openstack network show ${NET}-net -f value -c id)
+  NETWORK=$(openstack network show ${NET} -f value -c id)
   
   echo -n "Creating an instance..."
   openstack server create \
@@ -206,7 +208,7 @@ function instance() {
 
 function fip() {
   echo -n "Adding a floating ip to the instance..."
-  FLOATING_IP=$(openstack floating ip create -c floating_ip_address -f value public-net)
+  FLOATING_IP=$(openstack floating ip create -c floating_ip_address -f value ${PROVIDER_NAME})
   openstack server add floating ip test $FLOATING_IP
   echo "Done"
 }
