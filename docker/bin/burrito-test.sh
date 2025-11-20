@@ -5,7 +5,35 @@ set -e -o pipefail
 SELFSERVICE_NAME="private"
 PROVIDER_NAME="public"
 
+NET_TYPES=('flat' 'vlan')
+NET_TYPE=
+VLANID=
+
 function provider_settings() {
+  PS3='Choose the openstack provider network type: '
+  select opt in "${NET_TYPES[@]}"; do
+    case $opt in
+      "flat")
+        echo "You have selected: \"${opt}\"".
+        NET_TYPE='flat'
+        break
+        ;;
+      "vlan")
+        echo "You have selected: \"${opt}\"".
+        NET_TYPE='vlan'
+        while true; do
+          read -p 'Type the provider network vlan id (e.g. 56): ' VLANID
+          if grep -P -q "^\d+$" <<<"$VLANID"; then
+            echo "Okay. I got the provider network vlan id: $VLANID"
+            break
+          fi
+          echo "You should type the vlan id number. Type again."
+        done
+        break
+        ;;
+      *) echo "invalid type: $REPLY";;
+    esac
+  done
   while true; do
     read -p 'Type the provider network address (e.g. 192.168.22.0/24): ' PN
     if grep -P -q  "^\d+\.\d+\.\d+.\d+\/\d+" <<<"$PN"; then
@@ -78,11 +106,15 @@ function provider() {
   if ! openstack network show ${PROVIDER_NAME}-net >/dev/null 2>&1; then
     echo
     provider_settings
+    SEGMENT_PARAMS=
+    if [ ! -z "${VLANID}" ]; then
+      SEGMENT_PARAMS="--provider-segment ${VLANID}"
+    fi
     openstack network create \
         --external \
         --share \
-        --provider-network-type flat \
-        --provider-physical-network external \
+        --provider-network-type ${NET_TYPE} \
+        --provider-physical-network external ${SEGMENT_PARAMS} \
         ${PROVIDER_NAME}-net
   fi
   if ! openstack subnet show ${PROVIDER_NAME}-subnet >/dev/null 2>&1; then
